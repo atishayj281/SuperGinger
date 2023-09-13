@@ -1,0 +1,17 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Super_Ginger",
+    "\\Super_Ginger\\obj",
+    "\\Super_Ginger\\obj\\release",
+    "\\Super_Ginger\\obj\\release\\netcoreapp3.1",
+    "\\Super_Ginger\\Properties",
+    "\\Super_Ginger\\recognizers",
+    "\\Super_Ginger\\schemas",
+    "\\Super_Ginger\\scripts",
+    "\\Super_Ginger\\scripts\\DeploymentTemplates",
+    "\\Super_Ginger\\settings"
+  ],
+  "SelectedNode": "\\Super_Ginger\\language-generation\\en-us\\Super_Ginger.en-us.lg",
+  "PreviewInSolutionExplorer": false
+}

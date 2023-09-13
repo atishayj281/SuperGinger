@@ -1,0 +1,374 @@
+{
+  "$kind": "Microsoft.AdaptiveDialog",
+  "$designer": {
+    "name": "Super_Ginger",
+    "description": "",
+    "id": "A79tBe"
+  },
+  "autoEndDialog": true,
+  "defaultResultProperty": "dialog.result",
+  "triggers": [
+    {
+      "$kind": "Microsoft.OnConversationUpdateActivity",
+      "$designer": {
+        "id": "376720",
+        "comment": "This trigger runs when a conversation update activity is sent to the bot. This indicates a user or bot being added or removed from a conversation."
+      },
+      "actions": [
+        {
+          "$kind": "Microsoft.Foreach",
+          "$designer": {
+            "id": "518944",
+            "name": "Loop: for each item",
+            "comment": "For each member added to the conversation."
+          },
+          "itemsProperty": "turn.Activity.membersAdded",
+          "actions": [
+            {
+              "$kind": "Microsoft.IfCondition",
+              "$designer": {
+                "id": "641773",
+                "name": "Branch: if/else",
+                "comment": "Checks that that member added ID does not match the bot ID. This prevents the greeting message from being sent when the bot is added to a conversation."
+              },
+              "condition": "=string(dialog.foreach.value.id) != string(turn.Activity.Recipient.id)",
+              "actions": [
+                {
+                  "$kind": "Microsoft.SetProperty",
+                  "$designer": {
+                    "id": "3vwOt3"
+                  },
+                  "property": "user.isNew",
+                  "value": true
+                }
+              ]
+            }
+          ],
+          "value": "dialog.foreach.value"
+        }
+      ]
+    },
+    {
+      "$kind": "Microsoft.OnUnknownIntent",
+      "$designer": {
+        "id": "mb2n1u",
+        "comment": "This trigger fires when an incoming activity is not handled by any other trigger."
+      },
+      "actions": [
+        {
+          "$kind": "Microsoft.IfCondition",
+          "$designer": {
+            "id": "Vb72lI"
+          },
+          "condition": "=user.isNew == true",
+          "actions": [
+            {
+              "$kind": "Microsoft.SetProperty",
+              "$designer": {
+                "id": "StG2hP"
+              },
+              "property": "user.prevQuery"
+            },
+            {
+              "$kind": "Microsoft.SetProperty",
+              "$designer": {
+                "id": "WZWJTO"
+              },
+              "property": "user.entitiesPerChat"
+            },
+            {
+              "$kind": "Microsoft.SetProperty",
+              "$designer": {
+                "id": "Xb9fqq"
+              },
+              "property": "user.entities",
+              "value": []
+            },
+            {
+              "$kind": "Microsoft.SetProperty",
+              "$designer": {
+                "id": "hQOunL"
+              },
+              "property": "user.isNew",
+              "value": false
+            }
+          ],
+          "elseActions": []
+        },
+        {
+          "$kind": "Microsoft.HttpRequest",
+          "$designer": {
+            "id": "nvoE2Q"
+          },
+          "resultProperty": "turn.results",
+          "method": "POST",
+          "url": "https://aoi-superginger-dev-001.openai.azure.com/openai/deployments/gpt-superginger-dev-001/chat/completions?api-version=2023-05-15",
+          "body": {
+            "model": "turbo-gpt-35",
+            "messages": [
+              {
+                "role": "system",
+                "content": "Generate a JSON object reflecting tags, intent, and entities based on the provided input JSON, strictly follow the following format:\nInput:\n{\"current_message\": \"What are his qualifications?\", \"previous_conversation\":[{\"message\": \"Who is the CEO?\", \"entities\": [\"Nagarro\", \"employees\"]}] }\nOutput:\n{\n\"tags\": [\"CEO\", \"Qualifications\"],\n\"intent\": \"get_info\",\n\"entities\": [\"Nagarro\"]\n}"
+              },
+              {
+                "role": "user",
+                "content": "{\"current_message\": \"${turn.activity.text}\", \"previous_conversation\":[{\"message\": \"${user.prevQuery}\", \"entities\": ${user.entities}}] }"
+              }
+            ],
+            "max_tokens": 30,
+            "temperature": 0.7,
+            "frequency_penalty": 0,
+            "presence_penalty": 0,
+            "top_p": 0.95,
+            "stop": null
+          },
+          "headers": {
+            "api-key": "83e7b950b5c94eed9283ff3c5097da7b"
+          },
+          "contentType": "application/json",
+          "responseType": "json"
+        },
+        {
+          "$kind": "Microsoft.IfCondition",
+          "$designer": {
+            "id": "xWad3T"
+          },
+          "condition": "=turn.results.statusCode == 200",
+          "actions": [
+            {
+              "$kind": "Microsoft.SetProperty",
+              "$designer": {
+                "id": "KxGApD"
+              },
+              "property": "turn.response",
+              "value": "${turn.results.content.choices[0].message.content}"
+            },
+            {
+              "$kind": "Microsoft.SetProperty",
+              "$designer": {
+                "id": "US64ew"
+              },
+              "property": "turn.response",
+              "value": "=split(turn.response, \"tags\")"
+            },
+            {
+              "$kind": "Microsoft.SetProperty",
+              "$designer": {
+                "id": "Hj7Lqx"
+              },
+              "property": "user.bot.response.tags",
+              "value": "=replace(replace(replace(replace(split(turn.response[1], \"intent\")[0], \"\\\"\", \"\"), \"[\", \"\"), \"]\", \"\"), \"\\n\", \"\")"
+            },
+            {
+              "$kind": "Microsoft.IfCondition",
+              "$designer": {
+                "id": "1sASGl"
+              },
+              "condition": "=(length(user.bot.response.tags) - 3) > 2",
+              "actions": [
+                {
+                  "$kind": "Microsoft.SetProperty",
+                  "$designer": {
+                    "id": "kJSoZX"
+                  },
+                  "property": "user.bot.response.tags",
+                  "value": "=split(substring(user.bot.response.tags, 2, length(user.bot.response.tags) - 3), \",\")"
+                }
+              ],
+              "elseActions": [
+                {
+                  "$kind": "Microsoft.SetProperty",
+                  "$designer": {
+                    "id": "6chidp"
+                  },
+                  "property": "user.bot.response.tags"
+                }
+              ]
+            },
+            {
+              "$kind": "Microsoft.SetProperty",
+              "$designer": {
+                "id": "rm2dTd",
+                "comment": ""
+              },
+              "property": "user.bot.response.entities",
+              "value": "=replace(replace(replace(replace(replace(replace(split(turn.response[1], \"entities\")[1], \"\\\"\", \"\"), \"[\", \"\"), \"]\", \"\"), \"}\", \"\"), \":\", \"\"), \"\\n\", \"\")"
+            },
+            {
+              "$kind": "Microsoft.SetProperty",
+              "$designer": {
+                "id": "j9qewj"
+              },
+              "property": "user.bot.response.entities",
+              "value": "=split(user.bot.response.entities, \",\")"
+            },
+            {
+              "$kind": "Microsoft.SetProperty",
+              "$designer": {
+                "id": "hSjUZc"
+              },
+              "property": "user.bot.response.content",
+              "value": "=union(user.bot.response.tags, user.bot.response.entities)"
+            },
+            {
+              "$kind": "Microsoft.IfCondition",
+              "$designer": {
+                "id": "vR1Llr"
+              },
+              "condition": "=count(user.bot.response.content) > 0",
+              "actions": [
+                {
+                  "$kind": "Microsoft.EditArray",
+                  "$designer": {
+                    "id": "q8bMbk"
+                  },
+                  "changeType": "push",
+                  "itemsProperty": "user.entitiesPerChat",
+                  "value": "=where(foreach(user.bot.response.content, x=> trim(x)), x, length(x) > 1)"
+                },
+                {
+                  "$kind": "Microsoft.IfCondition",
+                  "$designer": {
+                    "id": "ypdWsq"
+                  },
+                  "condition": "=count(user.entitiesPerChat) > 3",
+                  "actions": [
+                    {
+                      "$kind": "Microsoft.SetProperty",
+                      "$designer": {
+                        "id": "ESXskC"
+                      },
+                      "property": "user.entitiesPerChat",
+                      "value": "=subArray(user.entitiesPerChat, 1, count(user.entitiesPerChat))"
+                    }
+                  ]
+                },
+                {
+                  "$kind": "Microsoft.SetProperty",
+                  "$designer": {
+                    "id": "aEdZBE"
+                  },
+                  "property": "user.entities",
+                  "value": "=unique(flatten(user.entitiesPerChat))"
+                },
+                {
+                  "$kind": "Microsoft.SetProperty",
+                  "$designer": {
+                    "id": "kRNrQl"
+                  },
+                  "property": "user.prevQuery",
+                  "value": "=turn.activity.text"
+                },
+                {
+                  "$kind": "Microsoft.SetProperty",
+                  "$designer": {
+                    "id": "vIsLJX"
+                  },
+                  "property": "user.bot.response.content",
+                  "value": "=where(foreach(user.bot.response.content, x=> trim(x)), x, length(x) > 1)"
+                },
+                {
+                  "$kind": "Microsoft.HttpRequest",
+                  "$designer": {
+                    "id": "KjYd70"
+                  },
+                  "resultProperty": "turn.cog.results",
+                  "method": "GET",
+                  "url": "https://srch-superginger-dev.search.windows.net/indexes/azureblob-index/docs?api-version=2023-07-01-Preview&search=${join(user.bot.response.content, \" + \")}",
+                  "headers": {
+                    "api-key": "32hUZrlRAKz7YkOROCo8p0jN5aKV39gEAu8VBhFEnZAzSeAztEAg"
+                  },
+                  "contentType": "application/json",
+                  "responseType": "json"
+                },
+                {
+                  "$kind": "Microsoft.SetProperty",
+                  "$designer": {
+                    "id": "gyhUT4"
+                  },
+                  "property": "user.bot.avgScore",
+                  "value": 0
+                },
+                {
+                  "$kind": "Microsoft.Foreach",
+                  "$designer": {
+                    "id": "UUal85"
+                  },
+                  "index": "dialog.foreach.index",
+                  "value": "dialog.foreach.value",
+                  "itemsProperty": "turn.cog.results.content.value",
+                  "actions": [
+                    {
+                      "$kind": "Microsoft.SetProperty",
+                      "$designer": {
+                        "id": "YKpaWm"
+                      },
+                      "property": "user.bot.avgScore",
+                      "value": "=add(user.bot.avgScore, dialog.foreach.value[\"@search.score\"])"
+                    }
+                  ]
+                },
+                {
+                  "$kind": "Microsoft.SetProperty",
+                  "$designer": {
+                    "id": "ZkSerd"
+                  },
+                  "property": "user.bot.avgScore",
+                  "value": "=div(float(user.bot.avgScore), count(turn.cog.results.content.value))"
+                },
+                {
+                  "$kind": "Microsoft.Foreach",
+                  "$designer": {
+                    "id": "xPMTcO"
+                  },
+                  "index": "dialog.foreach.index",
+                  "value": "dialog.foreach.value",
+                  "itemsProperty": "turn.cog.results.content.value",
+                  "actions": [
+                    {
+                      "$kind": "Microsoft.IfCondition",
+                      "$designer": {
+                        "id": "vn7CXF"
+                      },
+                      "condition": "=dialog.foreach.value[\"@search.score\"] >= user.bot.avgScore",
+                      "actions": [
+                        {
+                          "$kind": "Microsoft.SendActivity",
+                          "$designer": {
+                            "id": "l8c7VB"
+                          },
+                          "activity": "${SendActivity_l8c7VB()}"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "elseActions": [
+                {
+                  "$kind": "Microsoft.SendActivity",
+                  "$designer": {
+                    "id": "99b65H"
+                  },
+                  "activity": "${SendActivity_99b65H()}"
+                }
+              ]
+            }
+          ],
+          "elseActions": [
+            {
+              "$kind": "Microsoft.SendActivity",
+              "$designer": {
+                "id": "P2XJxo"
+              },
+              "activity": "${SendActivity_P2XJxo()}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "generator": "Super_Ginger.lg",
+  "id": "Super_Ginger",
+  "recognizer": "Super_Ginger.lu.qna"
+}

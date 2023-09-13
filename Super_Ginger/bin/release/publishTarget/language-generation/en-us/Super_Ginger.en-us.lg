@@ -1,0 +1,207 @@
+[import](common.lg)
+
+# LogAction_Text_LtE7ZM()
+[Activity
+    Text = ${LogAction_Text_LtE7ZM_text()}
+]
+
+# LogAction_Text_LtE7ZM_text()
+- NewUser: ${user.isNew}
+# LogAction_Text_p345TH()
+[Activity
+    Text = ${LogAction_Text_p345TH_text()}
+]
+
+# LogAction_Text_p345TH_text()
+- user messages -> ${user.inputData}
+# LogAction_Text_jCvADn()
+[Activity
+    Text = ${LogAction_Text_jCvADn_text()}
+]
+
+# LogAction_Text_jCvADn_text()
+- ${union(dialog.response.text.tags, union.response.text.entities)}
+# LogAction_Text_DQLBHA()
+[Activity
+    Text = ${LogAction_Text_DQLBHA_text()}
+]
+
+# LogAction_Text_DQLBHA_text()
+- ${dialog.response}
+# LogAction_Text_epqmzV()
+[Activity
+    Text = ${LogAction_Text_epqmzV_text()}
+]
+
+# LogAction_Text_epqmzV_text()
+- ${dialog.response.text}
+# LogAction_Text_PypCvy()
+[Activity
+    Text = ${LogAction_Text_PypCvy_text()}
+]
+
+# LogAction_Text_PypCvy_text()
+- ${dialog.response.text.tags}
+# LogAction_Text_iJEsCM()
+[Activity
+    Text = ${LogAction_Text_iJEsCM_text()}
+]
+
+# LogAction_Text_iJEsCM_text()
+- ${dialog.response.text.entities}
+# LogAction_Text_EZwhER()
+[Activity
+    Text = ${LogAction_Text_EZwhER_text()}
+]
+
+# LogAction_Text_EZwhER_text()
+- ${dialog.response}
+# LogAction_Text_jiByNj()
+[Activity
+    Text = ${LogAction_Text_jiByNj_text()}
+]
+
+# LogAction_Text_jiByNj_text()
+- ${user.entitiesPerChat[count(user.entitiesPerChat) - 1]}
+# LogAction_Text_ZyjKxL()
+[Activity
+    Text = ${LogAction_Text_ZyjKxL_text()}
+]
+
+# LogAction_Text_ZyjKxL_text()
+- ${getProperty(dialog.foreach.value, "@search.score")}
+# LogAction_Text_M3uz7x()
+[Activity
+    Text = ${LogAction_Text_M3uz7x_text()}
+]
+
+# LogAction_Text_M3uz7x_text()
+- ${turn.results.content.choices[0].message.content}
+# LogAction_Text_XRrJuu()
+[Activity
+    Text = ${LogAction_Text_XRrJuu_text()}
+]
+
+# LogAction_Text_XRrJuu_text()
+- =split(turn.response, "tags")
+# SendActivity_Rk900R_attachment_yLK2Ws()
+> To learn more about the LG file format, read the documentation at
+> https://aka.ms/lg-file-format
+-```
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.0",
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "ActionSet",
+      "actions": [
+        {
+          "type": "Action.OpenUrl",
+          "title": "${dialog.foreach.value.metadata_storage_name}",
+          "url": "${dialog.foreach.value.SharePointUrl}"
+        }
+      ]
+    }
+  ]
+}
+
+```
+# SendActivity_Rk900R()
+[Activity
+    Attachments = ${json(SendActivity_Rk900R_attachment_yLK2Ws())}
+    AttachmentLayout = list
+]
+
+# SendActivity_P2XJxo()
+[Activity
+    Text = ${SendActivity_P2XJxo_text()}
+]
+
+# SendActivity_P2XJxo_text()
+- Sometihing went wrong
+# LogAction_Text_ptxwW1()
+[Activity
+    Text = ${LogAction_Text_ptxwW1_text()}
+]
+
+# LogAction_Text_ptxwW1_text()
+- tags
+# LogAction_Text_t9XYcb()
+[Activity
+    Text = ${LogAction_Text_t9XYcb_text()}
+]
+
+# LogAction_Text_t9XYcb_text()
+- repsonse
+# LogAction_Text_krrXwb()
+[Activity
+    Text = ${LogAction_Text_krrXwb_text()}
+]
+
+# LogAction_Text_krrXwb_text()
+- sdbsjhkj
+# LogAction_Text_iocwXh()
+[Activity
+    Text = ${LogAction_Text_iocwXh_text()}
+]
+
+# LogAction_Text_iocwXh_text()
+- dfge
+# LogAction_Text_dJOOV0()
+[Activity
+    Text = ${LogAction_Text_dJOOV0_text()}
+]
+
+# LogAction_Text_dJOOV0_text()
+- content
+# LogAction_Text_qeBbzi()
+[Activity
+    Text = ${LogAction_Text_qeBbzi_text()}
+]
+
+# LogAction_Text_qeBbzi_text()
+- epcx
+# LogAction_Text_9n4eiE()
+[Activity
+    Text = ${LogAction_Text_9n4eiE_text()}
+]
+
+# LogAction_Text_9n4eiE_text()
+- cepc
+# SendActivity_l8c7VB_attachment_yLK2Ws()
+> To learn more about the LG file format, read the documentation at
+> https://aka.ms/lg-file-format
+-```
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.0",
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "ActionSet",
+      "actions": [
+        {
+          "type": "Action.OpenUrl",
+          "title": "${dialog.foreach.value.metadata_storage_name}",
+          "url": "${dialog.foreach.value.SharePointUrl}"
+        }
+      ]
+    }
+  ]
+}
+
+```
+# SendActivity_l8c7VB()
+[Activity
+    Attachments = ${json(SendActivity_l8c7VB_attachment_yLK2Ws())}
+    AttachmentLayout = list
+]
+
+# SendActivity_99b65H()
+[Activity
+    Text = ${SendActivity_99b65H_text()}
+]
+
+# SendActivity_99b65H_text()
+- No Document Found, Please try again.
